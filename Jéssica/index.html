@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uma carta para você ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+/* ============ CORES (edite aqui) ============ */
+:root{
+  --vinho-fundo:#16050b;
+  --vinho:#3b0f1f;
+  --veludo:#5c1a30;
+  --rosa:#e59aab;
+  --creme:#f6e8dc;
+  --dourado:#d8b27a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;min-height:100dvh;
+  background:radial-gradient(ellipse at 50% 0%,var(--veludo) 0%,var(--vinho) 40%,var(--vinho-fundo) 100%) fixed;
+  color:var(--creme);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  overflow-x:hidden;
+}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+/* ============ ABERTURA / ENVELOPE ============ */
+#abertura{
+  position:fixed;inset:0;z-index:5;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+  transition:opacity 1.2s ease,visibility 1.2s;
+}
+#abertura.some{opacity:0;visibility:hidden}
+.envelope{
+  position:relative;width:min(78vw,320px);aspect-ratio:3/2;
+  background:var(--veludo);border-radius:6px;border:none;cursor:pointer;
+  box-shadow:0 20px 50px rgba(0,0,0,.55);
+  animation:respira 3.2s ease-in-out infinite;
+}
+.envelope::before{ /* abas laterais e inferior */
+  content:"";position:absolute;inset:0;border-radius:6px;
+  background:
+    linear-gradient(to top right,transparent 49.5%,#4a1426 50%) left/50% 100% no-repeat,
+    linear-gradient(to top left,transparent 49.5%,#4a1426 50%) right/50% 100% no-repeat;
+}
+.envelope .aba{ /* aba superior */
+  position:absolute;left:0;top:0;width:100%;height:55%;
+  background:#6d2038;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:top;transition:transform .9s ease;
+}
+.envelope .selo{
+  position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#e0536f,#8c1d36);
+  display:grid;place-items:center;font-size:1.3rem;
+  box-shadow:0 3px 8px rgba(0,0,0,.5);transition:opacity .4s;
+}
+.envelope.aberto .aba{transform:rotateX(180deg)}
+.envelope.aberto .selo{opacity:0}
+.envelope:focus-visible,.btn:focus-visible,#musica:focus-visible{outline:2px solid var(--dourado);outline-offset:4px}
+#abertura p{font-family:'Pinyon Script',cursive;font-size:clamp(1.8rem,7vw,2.6rem);color:var(--creme);text-align:center;padding:0 1rem}
+@keyframes respira{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ============ CARTA ============ */
+#conteudo{position:relative;z-index:2;opacity:0;visibility:hidden;transition:opacity 1.6s ease}
+#conteudo.visivel{opacity:1;visibility:visible}
+.papel{
+  max-width:640px;margin:0 auto;padding:12vh 1.6rem 4rem;
+}
+.titulo{font-family:'Pinyon Script',cursive;font-size:clamp(2.6rem,11vw,4rem);color:var(--rosa);text-align:center;margin-bottom:2.2rem;line-height:1.1}
+#carta{
+  font-size:clamp(1.25rem,4.6vw,1.5rem);line-height:1.75;white-space:pre-wrap;
+  color:var(--creme);min-height:6rem;
+}
+.cursor{display:inline-block;width:2px;height:1.1em;background:var(--rosa);margin-left:2px;vertical-align:text-bottom;animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{opacity:0}}
+.dica{text-align:center;font-style:italic;font-size:1rem;opacity:.55;margin-top:2rem}
+
+/* blocos que aparecem após a carta */
+.depois{opacity:0;transform:translateY(16px);transition:opacity 1.4s ease,transform 1.4s ease;pointer-events:none;height:0;overflow:hidden}
+.depois.mostra{opacity:1;transform:none;pointer-events:auto;height:auto;overflow:visible}
+
+/* ============ GALERIA ============ */
+.galeria-titulo{font-family:'Pinyon Script',cursive;font-size:2.2rem;text-align:center;color:var(--rosa);margin:3.5rem 0 1.2rem}
+.carrossel{
+  display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;
+  padding:0 max(1.6rem,calc((100vw - 640px)/2)) 1rem;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.carrossel::-webkit-scrollbar{display:none}
+.foto{
+  flex:0 0 78%;max-width:340px;aspect-ratio:3/4;scroll-snap-align:center;
+  border-radius:4px;overflow:hidden;position:relative;
+  background:var(--veludo);border:8px solid var(--creme);border-bottom-width:30px;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+}
+.foto:nth-child(odd){transform:rotate(-1.2deg)}
+.foto:nth-child(even){transform:rotate(1.2deg)}
+.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.foto .vazia{ /* aparece se a imagem não existir */
+  position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:1rem;
+  color:var(--rosa);font-style:italic;background:var(--vinho);
+}
+.legenda{position:absolute;left:0;right:0;bottom:-26px;text-align:center;color:#3b0f1f;font-size:1rem;font-style:italic}
+
+/* ============ BOTÃO FINAL ============ */
+.final{text-align:center;padding:3rem 1.6rem 6rem}
+.btn{
+  font-family:inherit;font-size:1.3rem;font-weight:600;
+  background:var(--rosa);color:var(--vinho-fundo);
+  border:none;border-radius:999px;padding:.9rem 2rem;cursor:pointer;
+  box-shadow:0 8px 24px rgba(229,154,171,.3);transition:transform .2s;
+}
+.btn:active{transform:scale(.96)}
+#mensagem-final{
+  font-family:'Pinyon Script',cursive;font-size:clamp(2rem,8vw,3rem);line-height:1.3;
+  color:var(--creme);margin-top:2rem;opacity:0;transform:scale(.9);transition:opacity 1.2s,transform 1.2s;
+}
+#mensagem-final.mostra{opacity:1;transform:none}
+
+/* ============ BOTÃO DE MÚSICA ============ */
+#musica{
+  position:fixed;right:max(1rem,env(safe-area-inset-right));bottom:max(1rem,env(safe-area-inset-bottom));z-index:10;
+  width:48px;height:48px;border-radius:50%;border:1px solid var(--dourado);
+  background:rgba(22,5,11,.7);color:var(--creme);font-size:1.3rem;cursor:pointer;
+  backdrop-filter:blur(6px);display:none;
+}
+#musica.ativo{display:block}
+
+@media (prefers-reduced-motion:reduce){
+  .envelope{animation:none}
+  *{transition-duration:.01s!important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- Música: troque "musica.mp3" pelo nome do seu arquivo (coloque na mesma pasta) -->
+<audio id="audio" src="lagum.mp3" loop preload="auto"></audio>
+
+<!-- Tela inicial -->
+<div id="abertura">
+  <button class="envelope" id="envelope" aria-label="Abrir a carta">
+    <span class="aba"></span><span class="selo">❤️</span>
+  </button>
+  <p>Abra quando estiver pronta ❤️</p>
+</div>
+
+<button id="musica" aria-label="Pausar ou tocar a música">♪</button>
+
+<!-- Conteúdo -->
+<main id="conteudo">
+  <section class="papel">
+    <h1 class="titulo" id="titulo"></h1>
+    <div id="carta" aria-live="off"></div><span class="cursor" id="cursor"></span>
+    <p class="dica" id="dica">toque na carta para ler mais rápido</p>
+  </section>
+
+  <section class="depois" id="blocoGaleria">
+    <h2 class="galeria-titulo">Nossos momentos</h2>
+    <div class="carrossel" id="carrossel">
+      <figure class="foto">
+        <img src="./imagens/01.jpg" alt="Nosso começo">
+        <figcaption class="legenda">Nosso começo</figcaption>
+      </figure>
+      <figure class="foto">
+        <img src="./imagens/05.jpg" alt="Nossa família">
+        <figcaption class="legenda">Nossa família</figcaption>
+      </figure>
+      <figure class="foto">
+        <img src="./imagens/06.jpg" alt="Nossas viagens">
+        <figcaption class="legenda">Nossas viagens</figcaption>
+      </figure>
+      <figure class="foto">
+        <img src="./imagens/04.jpg" alt="Nosso hoje">
+        <figcaption class="legenda">Nosso hoje</figcaption>
+      </figure>
+      <figure class="foto">
+        <img src="./imagens/03.jpg" alt="Nosso hoje">
+        <figcaption class="legenda">Nosso hoje</figcaption>
+      </figure>
+      <figure class="foto">
+        <img src="./imagens/02.jpg" alt="Nosso hoje">
+        <figcaption class="legenda">Nosso hoje</figcaption>
+      </figure>
+    </div>
+    <figure class="foto">
+        <img src="./imagens/07.jpg" alt="Nosso hoje">
+        <figcaption class="legenda">Nosso hoje</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="depois final" id="blocoFinal">
+    <button class="btn" id="btnFinal">Clique aqui, amor ❤️</button>
+    <p id="mensagem-final"></p>
+  </section>
+</main>
+
+<script>
+/* ===================================================
+   CONFIGURAÇÕES — edite só esta parte
+   =================================================== */
+const TITULO = "Para você, meu amor";
+
+const TEXTO_DA_CARTA = `Oi, amor,
+
+Tentei te escrever uma carta. Não sou muito bom em falar o que sinto, mas vou tentar, porque você é a pessoa que mais me fez feliz esse ano.
+
+Não imaginava que aquele drink misterioso seria tão surpriendente. Um pouco mais de um ano depois já estávamos segurando o nosso moranguinho, nem parece que demorei para te beijar pela primeira vez.kkkk 
+
+O dia em que a Teresa nasceu. Ali eu entendi que a nossa filha veio para fortalecer ainda mais o que sentia. Quando descobrimos que ela viria, nós querendo ou não, não tive medo algum, estava feliz por ter a minha familia. Sempre senti que a nossa filha veio para nos unir ainda mais. E te ver dando a luz a nossa filha foi a coisa mais bonita que eu já vi..
+
+Eu admiro em você: a forma como você cuida da nossa filha. O carinho, a paciência, o jeito de saber o que precisamos, sempre estar me apoiando. Você faz as coisas serem muito mais fácil, mas eu sei que não é, e tenho muito orgulho da mãe que você é.
+
+Obrigado por ser minha parceira nas noites mal dormidas, nos dias corridos e nas pequenas alegrias que ninguém vê.
+
+Eu te amo, hoje, amanhã e em todos os dias que ainda vamos viver juntos.
+
+Seu, Ricardo ❤️
+`;
+
+const MENSAGEM_FINAL = "Não sei como agradecer por ter dado a luz a nossa filha, nunca vou poder te agradecer o suficiente. Eu te amo mais que tudo. ❤️ Espero que possamos nos casar o quanto antes, estou ansioso para o Gregório e a nossa família ser ainda maior";
+
+const VELOCIDADE_DIGITACAO = 45; // milissegundos por letra (maior = mais devagar)
+
+/* ===================================================
+   CÓDIGO
+   =================================================== */
+const $ = id => document.getElementById(id);
+const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Efeito de fundo + confetes (mesmo canvas) ---------- */
+const canvas = $('fx'), ctx = canvas.getContext('2d');
+let W, H, DPR;
+function ajusta(){
+  DPR = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener('resize', ajusta); ajusta();
+
+function coracao(x,y,s,cor,alfa,rot=0){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(s,s);
+  ctx.globalAlpha = alfa; ctx.fillStyle = cor;
+  ctx.beginPath();
+  ctx.moveTo(0,.35);
+  ctx.bezierCurveTo(-1,-.35,-.5,-1,0,-.45);
+  ctx.bezierCurveTo(.5,-1,1,-.35,0,.35);
+  ctx.fill(); ctx.restore();
+}
+
+// Corações flutuando devagar de baixo para cima
+const flutuantes = Array.from({length: innerWidth < 600 ? 14 : 26}, () => novoFlutuante(true));
+function novoFlutuante(inicial){
+  return {
+    x: Math.random()*W,
+    y: inicial ? Math.random()*H : H + 30,
+    s: 6 + Math.random()*12,
+    v: .25 + Math.random()*.5,
+    a: .12 + Math.random()*.3,
+    f: Math.random()*6.28,
+    cor: Math.random() < .7 ? '#e59aab' : '#d8b27a'
+  };
+}
+
+// Partículas do efeito final
+let particulas = [];
+function explosao(){
+  const cores = ['#e59aab','#e0536f','#d8b27a','#f6e8dc','#c2304f'];
+  for(let i=0;i<140;i++){
+    const ang = Math.random()*Math.PI*2, vel = 4 + Math.random()*10;
+    particulas.push({
+      x: W/2, y: H*.55,
+      vx: Math.cos(ang)*vel, vy: Math.sin(ang)*vel - 5,
+      s: 6 + Math.random()*12, cor: cores[i % cores.length],
+      rot: Math.random()*6, vr: (Math.random()-.5)*.3, vida: 1
+    });
+  }
+}
+
+function quadro(t){
+  ctx.clearRect(0,0,W,H);
+  for(const f of flutuantes){
+    f.y -= f.v;
+    const bx = f.x + Math.sin(t/1500 + f.f)*14;
+    coracao(bx, f.y, f.s, f.cor, f.a * (.7 + .3*Math.sin(t/700 + f.f)));
+    if(f.y < -30) Object.assign(f, novoFlutuante(false));
+  }
+  particulas = particulas.filter(p => p.vida > 0);
+  for(const p of particulas){
+    p.vy += .22; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vida -= .006;
+    coracao(p.x, p.y, p.s, p.cor, Math.max(p.vida,0), p.rot);
+  }
+  requestAnimationFrame(quadro);
+}
+if(!reduz) requestAnimationFrame(quadro);
+
+/* ---------- Música ---------- */
+const audio = $('audio'), btnMusica = $('musica');
+function atualizaIcone(){ btnMusica.textContent = audio.paused ? '♪' : '❚❚'; }
+btnMusica.addEventListener('click', () => {
+  audio.paused ? audio.play().catch(()=>{}) : audio.pause();
+});
+audio.addEventListener('play', atualizaIcone);
+audio.addEventListener('pause', atualizaIcone);
+
+/* ---------- Abertura ---------- */
+$('envelope').addEventListener('click', () => {
+  $('envelope').classList.add('aberto');
+  audio.volume = .6;
+  audio.play().catch(()=>{});           // o clique libera o som no celular
+  btnMusica.classList.add('ativo');
+  setTimeout(() => {
+    $('abertura').classList.add('some');
+    $('conteudo').classList.add('visivel');
+    setTimeout(digitar, 1400);
+  }, 900);
+}, { once:true });
+
+/* ---------- Efeito de digitação ---------- */
+$('titulo').textContent = TITULO;
+let rapido = false, terminou = false;
+$('conteudo').addEventListener('click', e => {
+  if(e.target.closest('button')) return;
+  rapido = true;
+});
+
+function digitar(){
+  const alvo = $('carta');
+  let i = 0;
+  (function passo(){
+    if(i >= TEXTO_DA_CARTA.length) return fim();
+    const n = rapido ? 6 : 1;
+    const trecho = TEXTO_DA_CARTA.slice(i, i+n);
+    alvo.textContent += trecho;
+    i += n;
+    seguePagina();
+    const c = trecho.slice(-1);
+    let espera = rapido ? 12 : VELOCIDADE_DIGITACAO;
+    if(!rapido && '.!?'.includes(c)) espera *= 9;       // pausa nos finais de frase
+    else if(!rapido && ',;:'.includes(c)) espera *= 4;
+    else if(c === '\n') espera *= 5;
+    setTimeout(passo, espera);
+  })();
+}
+
+// Acompanha o texto se ele chegar perto da borda de baixo
+function seguePagina(){
+  const r = $('cursor').getBoundingClientRect();
+  if(r.bottom > innerHeight*.78) scrollBy({top: r.bottom - innerHeight*.6, behavior:'auto'});
+}
+
+function fim(){
+  if(terminou) return; terminou = true;
+  $('cursor').style.display = 'none';
+  $('dica').style.display = 'none';
+  $('blocoGaleria').classList.add('mostra');
+  setTimeout(() => $('blocoFinal').classList.add('mostra'), 900);
+}
+
+/* ---------- Mensagem final ---------- */
+$('btnFinal').addEventListener('click', () => {
+  explosao();
+  setTimeout(explosao, 450);
+  const m = $('mensagem-final');
+  m.textContent = MENSAGEM_FINAL;
+  m.classList.add('mostra');
+  m.scrollIntoView({ behavior:'smooth', block:'center' });
+});
+</script>
+</body>
+</html>
